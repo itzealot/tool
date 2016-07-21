@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.sky.projects.tool.entity.AuthData;
 import com.sky.projects.tool.entity.MobileAuth;
 import com.sky.projects.tool.util.Dates;
-import com.sky.projects.tool.util.FileUtil;
+import com.sky.projects.tool.util.Files;
 import com.sky.projects.tool.util.ParseLineUtil;
 
 public class AuthDataTransferThread implements Runnable {
@@ -84,13 +84,13 @@ public class AuthDataTransferThread implements Runnable {
 			doParseLine(line);
 		}
 
-		FileUtil.writeWithJson(dir, type, datas, allCounts);
+		Files.writeWithJson(dir, type, datas, allCounts);
 	}
 
 	private synchronized void writeParseErrorData() {
 		if (!parseErrorDataQueue.isEmpty()) {
 			parseErrorDataQueue.drainTo(errorLines, 10000);
-			FileUtil.write(new File(dir + "/parse-error.txt"), errorLines);
+			Files.write(new File(dir + "/parse-error.txt"), errorLines);
 			LOG.info("finish write the error parse data into file, size is : " + errorLines.size());
 			errorLines.clear();
 		}

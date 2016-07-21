@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.sky.projects.tool.conf.SkyConfiguration;
 import com.sky.projects.tool.thread.AuthDataTransferThread;
 import com.sky.projects.tool.thread.Threads;
-import com.sky.projects.tool.util.FileUtil;
+import com.sky.projects.tool.util.Files;
 
 /**
  * 对手机认证数据进行解析并生成 .log 和 .log.ok 文件
@@ -49,7 +49,7 @@ public class AuthDataParseCli {
 			// all counts
 			AtomicInteger allCounts = new AtomicInteger(0);
 
-			List<File> sourcesFiles = FileUtil.getSourceFiles(source, suffix);
+			List<File> sourcesFiles = Files.getSourceFiles(source, suffix);
 			BlockingQueue<String> parseErrorDataQueue = new LinkedBlockingQueue<>();
 			for (int i = 0; i < poolSize; i++) {
 				threads[i] = new AuthDataTransferThread(queue, target, size, poolSleep, type, parseErrorDataQueue,
@@ -59,7 +59,7 @@ public class AuthDataParseCli {
 
 			for (File file : sourcesFiles) {
 				LOG.info("start deal file name: " + file.getName());
-				FileUtil.read(queue, file, sleep, counts);
+				Files.read(queue, file, sleep, counts);
 				LOG.info("finish deal file name: " + file.getName());
 			}
 		} catch (Exception e) {

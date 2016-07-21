@@ -14,7 +14,7 @@ import com.sky.projects.tool.hbase.Hbase;
 import com.sky.projects.tool.redis.RedisDao;
 import com.sky.projects.tool.thread.FileRelation2HbaseThread;
 import com.sky.projects.tool.thread.Threads;
-import com.sky.projects.tool.util.FileUtil;
+import com.sky.projects.tool.util.Files;
 
 /**
  * 从文件中的relation记录导入 hbase
@@ -55,7 +55,7 @@ public class FileRelation2HbaseCli {
 		}
 
 		try {
-			FileUtil.read(queue, new File(fileName), sleep, queueSizeLimit);
+			Files.read(queue, new File(fileName), sleep, queueSizeLimit);
 		} catch (Exception e) {
 			LOG.error("读取文件中的relation记录到hbase手动任务任务失败!", e);
 		}

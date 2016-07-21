@@ -1,7 +1,5 @@
 package com.sky.projects.tool.conf;
 
-import java.io.File;
-
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -13,9 +11,10 @@ public class SkyConfiguration {
 	public SkyConfiguration() {
 		try {
 			// 正式的情况下,需要在配置目录下读取配置文件
-			String userPath = System.getProperty("user.dir");
-			String configPath = userPath + File.separator + "conf" + File.separator;
-			config = new PropertiesConfiguration(configPath + "conf.properties");
+//			String userPath = System.getProperty("user.dir");
+//			String configPath = userPath + File.separator + "conf/";
+//			config = new PropertiesConfiguration(configPath + "conf.properties");
+			config = new PropertiesConfiguration("conf.properties");
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
 		}

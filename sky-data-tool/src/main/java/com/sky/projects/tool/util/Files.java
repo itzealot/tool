@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
 
 import org.apache.hadoop.hbase.util.Threads;
 import org.slf4j.Logger;
@@ -29,9 +28,9 @@ import com.google.gson.Gson;
  * @author zealot
  *
  */
-public final class FileUtil {
+public final class Files {
 
-	private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Files.class);
 
 	/**
 	 * 处理单个文件，读取内容到阻塞队列中,阻塞队列数据量到达 counts 数量时，休息 sleep ms(用于降低cpu)
@@ -55,10 +54,8 @@ public final class FileUtil {
 				index++;
 
 				if (queue.size() >= counts) {
-					LOG.info(
-							"read thread sleep " + sleep
-									+ " ms, current line is : {}, current queue size:{}.......................",
-							index, queue.size());
+					LOG.info("read thread sleep " + sleep + " ms, current line is : {}, current queue size:{}.", index,
+							queue.size());
 					Threads.sleep(sleep);
 				}
 			}
@@ -191,43 +188,8 @@ public final class FileUtil {
 			return;
 		}
 
-		String path = dir + "/" + DateUtil.DateToStr(new Date(), "yyyyMMddHHmmss") + random()
-				+ "_124_440200_743218887_0" + type + ".log";
-
-		int len = datas.size();
-		String json = new Gson().toJson(datas);
-		datas.clear();
-
-		BufferedWriter writer = null;
-		FileOutputStream fos = null;
-
-		try {
-			fos = new FileOutputStream(new File(path));
-			writer = new BufferedWriter(new OutputStreamWriter(fos, Charset.forName("UTF-8")));
-			writer.write(json);
-
-			new File(path + ".ok").createNewFile();
-
-			LOG.info("finish write datas with json into file, size is :{}, write all counts are : {}", len,
-					counts.addAndGet(len));
-			json = null;
-		} catch (Exception e) {
-			LOG.error("write datas with json into file and create ok file error.", e);
-		} finally {
-			Closeables.close(writer, fos);
-		}
-	}
-
-	/**
-	 * 向文件中写入 json 数据及 .ok 文件，并清除元数据
-	 * 
-	 * @param path
-	 * @param json
-	 */
-	public static <T> void writeWithJson(final String path, final List<T> datas, AtomicInteger counts) {
-		if (datas == null || datas.isEmpty()) {
-			return;
-		}
+		String path = dir + "/" + Dates.toString(new Date(), "yyyyMMddHHmmss") + random() + "_124_440200_743218887_0"
+				+ type + ".log";
 
 		int len = datas.size();
 		String json = new Gson().toJson(datas);
@@ -258,7 +220,7 @@ public final class FileUtil {
 	 * 
 	 * @return
 	 */
-	public static String random() {
+	private static String random() {
 		int i = new Random().nextInt(1000);
 		if (i < 10) {
 			return "00" + i;
@@ -267,42 +229,6 @@ public final class FileUtil {
 		}
 
 		return "" + i;
-	}
-
-	private static String regexPhone = "^((\\+?86)|(\\(\\+86\\))|852)?(13[0-9][0-9]{8}|15[0-9][0-9]{8}|18[0-9][0-9]{8}|14[0-9][0-9]{8}|17[0-9][0-9]{8}|[0-9]{8})$";
-
-	public static boolean isPhone(String phone) {
-		return Pattern.compile(regexPhone).matcher(phone).matches();
-	}
-
-	public static void main(String[] args) {
-		System.out.println(isPhone("60122117821"));
-		System.out.println(isPhone("13473221617"));
-		System.out.println(isPhone("16035988238"));
-	}
-
-	public static String trimPhone(String pHONE) {
-		int index = pHONE.indexOf('+');
-		return index == -1 ? pHONE : pHONE.substring(index + 1);
-	}
-
-	public static String dealMac(String mac) {
-		String res = mac == null ? "" : mac;
-		res = res.length() == 17 ? res : res.toUpperCase();
-		return res.length() == 12 ? append(res) : res;
-	}
-
-	private static String append(String mac) {
-		final char spiliter = '-';
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 1; i <= 12; i++) {
-			buffer.append(mac.charAt(i - 1));
-			if (i % 2 == 0 && i != 12) {
-				buffer.append(spiliter);
-			}
-		}
-
-		return buffer.toString().toUpperCase();
 	}
 
 	/**
@@ -330,6 +256,6 @@ public final class FileUtil {
 		}
 	}
 
-	private FileUtil() {
+	private Files() {
 	}
 }

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sky.projects.tool.entity.SfData;
 import com.sky.projects.tool.util.Dates;
-import com.sky.projects.tool.util.FileUtil;
+import com.sky.projects.tool.util.Files;
 import com.sky.projects.tool.util.SfDataTransferUtil;
 
 public class SfString2JsonThread implements Runnable {
@@ -75,7 +75,7 @@ public class SfString2JsonThread implements Runnable {
 
 				this.lines.clear();
 
-				FileUtil.writeWithJson(dir, type, datas, allCounts);
+				Files.writeWithJson(dir, type, datas, allCounts);
 
 				writeIntoFile();
 			} else {
@@ -131,7 +131,7 @@ public class SfString2JsonThread implements Runnable {
 			return;
 		}
 
-		FileUtil.write(new File(filePath), this.currentStrings);
+		Files.write(new File(filePath), this.currentStrings);
 		LOG.info("finish write the not parse data into file, size:{}, all counts:{}", len,
 				allErrorCounts.addAndGet(len));
 

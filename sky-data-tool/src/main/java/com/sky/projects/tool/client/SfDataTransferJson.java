@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.sky.projects.tool.conf.SkyConfiguration;
 import com.sky.projects.tool.thread.SfString2JsonThread;
 import com.sky.projects.tool.thread.Threads;
-import com.sky.projects.tool.util.FileUtil;
+import com.sky.projects.tool.util.Files;
 
 /**
  * 根据第三方的身份关系数据(使用\t分隔)的文件，将其转换为SfData的json文件，并通过Kafka传输，进行入库与抽取关系、抽取身份
@@ -46,7 +46,7 @@ public class SfDataTransferJson {
 			int sleep = massConfiguration.getInt("transfer.sf.data.sleep", 1000);
 			int counts = massConfiguration.getInt("transfer.sf.data.sleep.counts", 60000);
 
-			List<File> sourcesFiles = FileUtil.getSourceFiles(source, suffix);
+			List<File> sourcesFiles = Files.getSourceFiles(source, suffix);
 
 			for (int i = 0; i < poolSize; i++) {
 				threads[i] = new SfString2JsonThread(target, queue, concurrentDatas, jsonSize, poolSleep, type);
@@ -55,7 +55,7 @@ public class SfDataTransferJson {
 
 			for (File file : sourcesFiles) {
 				LOG.info("start deal file name: " + file.getName());
-				FileUtil.read(queue, file, sleep, counts);
+				Files.read(queue, file, sleep, counts);
 				LOG.info("finish deal file name: " + file.getName());
 			}
 		} catch (Exception e) {

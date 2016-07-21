@@ -13,7 +13,7 @@ import com.google.common.base.Preconditions;
 import com.sky.projects.tool.entity.MysqlRelation;
 import com.sky.projects.tool.hbase.Hbase;
 import com.sky.projects.tool.redis.RedisDao;
-import com.sky.projects.tool.util.FileUtil;
+import com.sky.projects.tool.util.Files;
 import com.sky.projects.tool.util.ParseLineUtil;
 
 public class FileRelation2HbaseThread implements Runnable {
@@ -85,7 +85,7 @@ public class FileRelation2HbaseThread implements Runnable {
 	private void writeDataLines() {
 		errorQueue.drainTo(errorLines, 10000);
 		if (!errorLines.isEmpty()) {
-			FileUtil.write(new File(dir + "/error-relation.txt"), errorLines);
+			Files.write(new File(dir + "/error-relation.txt"), errorLines);
 			errorLines.clear();
 		}
 	}
