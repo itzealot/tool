@@ -11,10 +11,12 @@ public class SkyConfiguration {
 	public SkyConfiguration() {
 		try {
 			// 正式的情况下,需要在配置目录下读取配置文件
-//			String userPath = System.getProperty("user.dir");
-//			String configPath = userPath + File.separator + "conf/";
-//			config = new PropertiesConfiguration(configPath + "conf.properties");
-			config = new PropertiesConfiguration("conf.properties");
+			String userPath = System.getProperty("user.dir");
+			String configPath = userPath + "/conf/";
+			config = new PropertiesConfiguration(configPath + "conf.properties");
+			
+			// for eclipse
+//			config = new PropertiesConfiguration("conf.properties");
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
 		}

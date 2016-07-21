@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
@@ -197,6 +198,81 @@ public final class MysqlDao {
 		}
 
 		return value;
+	}
+
+	private String sql = "insert into focus_mac_info(`store_id`,`match_type`,`match_child_type`,`match_value`,create_time) values(23,?,?,?,now())";
+
+	/**
+	 * batch insert sd persons into focus_mac_info
+	 * 
+	 * @param lines
+	 */
+	public void batchInsertSDPerson(List<String> lines) {
+		if (lines == null || lines.isEmpty()) {
+			return;
+		}
+
+		PreparedStatement pstm = null;
+		try {
+			pstm = conn.prepareStatement(sql);
+
+			for (String line : lines) {
+				if (isBlank(line)) {
+					continue;
+				}
+
+				String[] arrays = line.split("\t");
+				String certCode = "";
+				String phone = "";
+				String qq = "";
+
+				if (arrays.length >= 1) {
+					certCode = arrays[0];
+				}
+
+				if (arrays.length >= 3) {
+					phone = arrays[2];
+				}
+
+				if (arrays.length >= 4) {
+					qq = arrays[3];
+				}
+
+				if (!isBlank(certCode)) {
+					pstm.setString(1, "5");
+					pstm.setString(2, "11");
+					pstm.setString(3, certCode);
+					pstm.addBatch();
+				}
+
+				if (!isBlank(phone)) {
+					pstm.setString(1, "2");
+					pstm.setString(2, "");
+					pstm.setString(3, phone);
+					pstm.addBatch();
+				}
+
+				if (!isBlank(qq)) {
+					pstm.setString(1, "6");
+					pstm.setString(2, "1030001");
+					pstm.setString(3, qq);
+					pstm.addBatch();
+				}
+			}
+
+			pstm.executeBatch();
+
+			LOG.info("finish insert into table, batch lines size {}.", lines.size());
+			lines.clear();
+		} catch (SQLException e) {
+			LOG.error("insert into focus_mac_info table error.", e);
+		} finally {
+			Closeables.close(pstm);
+		}
+	}
+
+	private boolean isBlank(String value) {
+		return value == null || "".equals(value.trim()) || "MULL".equals(value.trim());
 	}
 
 	public void closeConnection() {
