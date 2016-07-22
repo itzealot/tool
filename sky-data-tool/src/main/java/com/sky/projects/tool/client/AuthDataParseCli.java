@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sky.projects.tool.conf.SkyConfiguration;
+import com.sky.projects.tool.conf.MassConfiguration;
 import com.sky.projects.tool.thread.AuthDataTransferThread;
 import com.sky.projects.tool.thread.Threads;
 import com.sky.projects.tool.util.Files;
@@ -28,7 +28,7 @@ public class AuthDataParseCli {
 	public static void main(String[] args) {
 		LOG.info("AuthData 处理手动任务开始,在配置文件conf/conf.properties中修改配置参数...");
 
-		SkyConfiguration massConfiguration = new SkyConfiguration();
+		MassConfiguration massConfiguration = new MassConfiguration();
 		int poolSize = massConfiguration.getInt("transfer.auth.data.pool.size", 10);
 		// 根据线程池大小创建线程池
 		ExecutorService threadPool = Executors.newFixedThreadPool(poolSize);

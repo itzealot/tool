@@ -10,7 +10,7 @@ import org.apache.hadoop.hbase.util.Threads;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sky.projects.tool.conf.SkyConfiguration;
+import com.sky.projects.tool.conf.MassConfiguration;
 import com.sky.projects.tool.thread.SdPersonThread;
 import com.sky.projects.tool.util.FileUtil;
 
@@ -26,7 +26,7 @@ public class SdPerson2MysqlCli {
 	public static void main(String[] args) {
 		LOG.info("读取SdPerson插入Mysql手动任务开始,在配置文件conf/conf.properties中修改配置参数...");
 
-		SkyConfiguration configuration = new SkyConfiguration();
+		MassConfiguration configuration = new MassConfiguration();
 		int poolSize = configuration.getInt("sd.person.pool.size", 5);
 		SdPersonThread[] threads = new SdPersonThread[poolSize];
 		// 根据线程池大小创建线程池

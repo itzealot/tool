@@ -4,11 +4,11 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-public class SkyConfiguration {
+public class MassConfiguration {
 
 	private Configuration config;
 
-	public SkyConfiguration() {
+	public MassConfiguration() {
 		try {
 			// 正式的情况下,需要在配置目录下读取配置文件
 			String userPath = System.getProperty("user.dir");

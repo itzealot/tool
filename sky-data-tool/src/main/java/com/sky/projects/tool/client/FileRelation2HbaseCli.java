@@ -9,7 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sky.projects.tool.conf.SkyConfiguration;
+import com.sky.projects.tool.conf.MassConfiguration;
 import com.sky.projects.tool.hbase.Hbase;
 import com.sky.projects.tool.redis.RedisDao;
 import com.sky.projects.tool.thread.FileRelation2HbaseThread;
@@ -29,7 +29,7 @@ public class FileRelation2HbaseCli {
 		LOG.info("从文件中读取relation记录到hbase手动任务开始,在配置文件conf/conf.properties中修改配置参数...");
 
 		BlockingQueue<String> queue = new LinkedBlockingQueue<>();
-		SkyConfiguration massConfiguration = new SkyConfiguration();
+		MassConfiguration massConfiguration = new MassConfiguration();
 		int poolSize = massConfiguration.getInt("copy.relation.to.hbase.pool.size", 10);
 		// 根据线程池大小创建线程池
 		ExecutorService threadPool = Executors.newFixedThreadPool(poolSize);

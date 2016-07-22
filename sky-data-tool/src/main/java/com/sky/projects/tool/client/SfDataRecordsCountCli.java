@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sky.projects.tool.conf.SkyConfiguration;
+import com.sky.projects.tool.conf.MassConfiguration;
 import com.sky.projects.tool.thread.SfStringCountThread;
 import com.sky.projects.tool.thread.Threads;
 import com.sky.projects.tool.util.Closeables;
@@ -28,7 +28,7 @@ public class SfDataRecordsCountCli {
 	public static void main(String[] args) {
 		LOG.info("SfData 统计手动任务开始,在配置文件conf/conf.properties中修改配置参数...");
 
-		SkyConfiguration massConfiguration = new SkyConfiguration();
+		MassConfiguration massConfiguration = new MassConfiguration();
 		// 根据线程池大小创建线程池
 		BlockingQueue<String> queue = new LinkedBlockingQueue<>();
 		int poolSize = massConfiguration.getInt("transfer.sf.data.pool.size", 10);

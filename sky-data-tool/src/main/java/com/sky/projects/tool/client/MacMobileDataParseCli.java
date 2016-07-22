@@ -12,7 +12,7 @@ import org.apache.hadoop.hbase.util.Threads;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sky.projects.tool.conf.SkyConfiguration;
+import com.sky.projects.tool.conf.MassConfiguration;
 import com.sky.projects.tool.thread.MacMobileDataTransferThread;
 import com.sky.projects.tool.util.FileUtil;
 
@@ -28,7 +28,7 @@ public class MacMobileDataParseCli {
 	public static void main(String[] args) {
 		LOG.info("MAC and Mobile 处理手动任务开始,在配置文件conf/conf.properties中修改配置参数...");
 
-		SkyConfiguration skyConfiguration = new SkyConfiguration();
+		MassConfiguration skyConfiguration = new MassConfiguration();
 		int poolSize = skyConfiguration.getInt("transfer.mobile.data.pool.size", 10);
 		// 根据线程池大小创建线程池
 		ExecutorService threadPool = Executors.newFixedThreadPool(poolSize);

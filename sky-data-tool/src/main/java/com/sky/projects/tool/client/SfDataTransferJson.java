@@ -10,7 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sky.projects.tool.conf.SkyConfiguration;
+import com.sky.projects.tool.conf.MassConfiguration;
 import com.sky.projects.tool.thread.SfString2JsonThread;
 import com.sky.projects.tool.thread.Threads;
 import com.sky.projects.tool.util.Files;
@@ -28,7 +28,7 @@ public class SfDataTransferJson {
 		LOG.info("SfData 处理手动任务开始,在配置文件conf/conf.properties中修改配置参数...");
 
 		// 根据线程池大小创建线程池
-		SkyConfiguration massConfiguration = new SkyConfiguration();
+		MassConfiguration massConfiguration = new MassConfiguration();
 		BlockingQueue<String> queue = new LinkedBlockingQueue<>();
 		BlockingQueue<String> concurrentDatas = new LinkedBlockingQueue<>();
 
