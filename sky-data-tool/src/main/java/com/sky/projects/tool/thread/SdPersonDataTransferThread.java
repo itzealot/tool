@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
 
 import org.apache.hadoop.hbase.util.Threads;
 import org.slf4j.Logger;
@@ -15,10 +14,11 @@ import org.slf4j.LoggerFactory;
 import com.sky.projects.tool.entity.SfData;
 import com.sky.projects.tool.util.DateUtil;
 import com.sky.projects.tool.util.FileUtil;
+import com.sky.projects.tool.util.IDCardUtil;
 import com.sky.projects.tool.util.ParseLineUtil;
 
-public class MacMobileDataTransferThread implements Runnable {
-	private static final Logger LOG = LoggerFactory.getLogger(MacMobileDataTransferThread.class);
+public class SdPersonDataTransferThread implements Runnable {
+	private static final Logger LOG = LoggerFactory.getLogger(SdPersonDataTransferThread.class);
 
 	// 目标文件写入目录
 	private String dir;
@@ -46,9 +46,9 @@ public class MacMobileDataTransferThread implements Runnable {
 
 	// 写入 json 文件的数量
 	private AtomicInteger allCounts;
-	private int dataType;
+	int dataType;
 
-	public MacMobileDataTransferThread(BlockingQueue<String> queue, String dir, int size, int sleep, int type,
+	public SdPersonDataTransferThread(BlockingQueue<String> queue, String dir, int size, int sleep, int type,
 			BlockingQueue<String> parseErrorDataQueue, AtomicInteger allCounts, int dataType) {
 		this.queue = queue;
 		this.dir = dir;
@@ -88,7 +88,7 @@ public class MacMobileDataTransferThread implements Runnable {
 		}
 
 		String path = dir + "/" + DateUtil.DateToStr(new Date(), "yyyyMMddHHmmss") + FileUtil.random()
-				+ "_999_440300_723005104_0" + type + ".log";
+				+ "_133_440300_723005105_0" + type + ".log";
 
 		FileUtil.writeWithJson(path, datas, allCounts);
 	}
@@ -117,58 +117,72 @@ public class MacMobileDataTransferThread implements Runnable {
 		String aCCOUNT = "";
 		String lAST_PLACE = "";
 
-		switch (dataType) {
-		case 1:// baimi_mac_i_mobile_25754871 数据处理
-			mAC = fileds.get(0);
-			pHONE = fileds.get(1);
-			break;
-		case 2: // baimi_mac_o_moblie_56839.txt 数据
-			mAC = fileds.get(0);
-			pHONE = fileds.get(1);
-			LOG.info("fileds:{}", fileds);
-			LOG.info("mAC:{}, pHONE:{}, size:{}", mAC, pHONE, fileds.size());
-			break;
-		case 3: // fenghuo_MOBILE_MAC.txt
-			mAC = fileds.get(1);
-			pHONE = fileds.get(0);
-			break;
-		}
-
-		// 去掉 +
-		String phone = trimPhone(pHONE);
-
-		// 不为 phone
-		if (!isPhone(phone)) {
+		if (fileds.isEmpty()) {
 			try {
 				parseErrorDataQueue.put(line);
-				LOG.error("mAC:{}, phone:{}, line:{}", mAC, phone, line);
+				LOG.error("parse line error, line:{}", line);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				LOG.error("put line into queue error", e);
 			}
-			fileds.clear();
 			return;
 		}
 
-		// deal mac
-		mAC = FileUtil.dealMac(mAC);
+		int len = fileds.size();
+
+		if (len >= 1) {// certificate code
+			try {
+				cERTIFICATE_CODE = IDCardUtil.transferIDCard(fileds.get(0));
+			} catch (Exception e) {
+				LOG.error("certificate code error, line:{}", line);
+				return;
+			}
+			if (!isBlank(cERTIFICATE_CODE)) {
+				cERTIFICATE_TYPE = "1021111";
+			} else {
+				cERTIFICATE_CODE = "";
+			}
+		}
+
+		if (len >= 2) { // name
+			aUTH_CODE = fileds.get(1);
+
+			if (aUTH_CODE.indexOf("|") != -1) {
+				aUTH_CODE = aUTH_CODE.split("\\|")[1];
+			}
+
+			if (!isBlank(aUTH_CODE)) {
+				aUTH_TYPE = "1021902";
+			} else {
+				aUTH_CODE = "";
+			}
+		}
+
+		if (len >= 3) {
+			pHONE = fileds.get(2);
+			if (isBlank(pHONE)) {
+				pHONE = "";
+			}
+		}
+
+		if (len >= 4) {
+			aCCOUNT = fileds.get(3);
+			if (isBlank(aCCOUNT)) {
+				iD_TYPE = "1030001"; // QQ protocol
+			} else {
+				aCCOUNT = "";
+			}
+		}
 
 		long startTime = new Date().getTime() / 1000;
-		datas.add(new SfData(mAC, phone, iMSI, iMEI, aUTH_TYPE, aUTH_CODE, cERTIFICATE_TYPE, cERTIFICATE_CODE, iD_TYPE,
+		datas.add(new SfData(mAC, pHONE, iMSI, iMEI, aUTH_TYPE, aUTH_CODE, cERTIFICATE_TYPE, cERTIFICATE_CODE, iD_TYPE,
 				aCCOUNT, Integer.valueOf("" + startTime), lAST_PLACE));
 
 		// 清空字段
 		fileds.clear();
 	}
 
-	private static String regexPhone = "^((\\+?86)|(\\(\\+86\\))|852)?(13[0-9][0-9]{8}|15[0-9][0-9]{8}|18[0-9][0-9]{8}|14[0-9][0-9]{8}|17[0-9][0-9]{8}|[0-9]{8})$";
-
-	public static boolean isPhone(String phone) {
-		return Pattern.compile(regexPhone).matcher(phone).matches();
-	}
-
-	private String trimPhone(final String pHONE) {
-		int index = pHONE.indexOf('+');
-		return index == -1 ? pHONE : pHONE.substring(index + 1);
+	private boolean isBlank(String value) {
+		return value == null || "".equals(value.trim()) || "MULL".equals(value.trim());
 	}
 
 	public void stop() {

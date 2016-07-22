@@ -19,5 +19,7 @@ public class MacTest extends TestCase {
 		assertTrue(true);
 		
 		System.out.println(FileUtil.dealMac("d0a637387cb6"));
+		
+		System.out.println("张琳|张林".indexOf("|"));
 	}
 }
