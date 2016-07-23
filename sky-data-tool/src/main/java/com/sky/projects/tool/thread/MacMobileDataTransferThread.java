@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sky.projects.tool.entity.SfData;
-import com.sky.projects.tool.util.DateUtil;
+import com.sky.projects.tool.util.Dates;
 import com.sky.projects.tool.util.FileUtil;
 import com.sky.projects.tool.util.ParseLineUtil;
 
@@ -87,7 +87,7 @@ public class MacMobileDataTransferThread implements Runnable {
 			doParseLine(line);
 		}
 
-		String path = dir + "/" + DateUtil.DateToStr(new Date(), "yyyyMMddHHmmss") + FileUtil.random()
+		String path = dir + "/" + Dates.date2Str(new Date(), "yyyyMMddHHmmss") + FileUtil.random()
 				+ "_999_440300_723005104_0" + type + ".log";
 
 		FileUtil.writeWithJson(path, datas, allCounts);

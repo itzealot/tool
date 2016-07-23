@@ -4,13 +4,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
@@ -55,10 +56,7 @@ public final class FileUtil {
 				index++;
 
 				if (queue.size() >= counts) {
-					LOG.info(
-							"read thread sleep " + sleep
-									+ " ms, current line is : {}, current queue size:{}.......................",
-							index, queue.size());
+					LOG.info("read thread sleep, current line is : {}, current queue size:{}.", index, queue.size());
 					Threads.sleep(sleep);
 				}
 			}
@@ -69,6 +67,35 @@ public final class FileUtil {
 			throw new Exception("read file contents line by line into BlockingQueue error.", e);
 		} finally {
 			Closeables.close(reader);
+		}
+	}
+
+	public static void readByGbk(BlockingQueue<String> queue, File file, long sleep, int counts) throws Exception {
+		BufferedReader reader = null;
+		FileInputStream in = null;
+
+		try {
+			in = new FileInputStream(file);
+			reader = new BufferedReader(new InputStreamReader(in, Charset.forName("GBK")));
+			String line = null;
+			long index = 0;
+
+			while ((line = reader.readLine()) != null) {
+				queue.put(line);
+				index++;
+
+				if (queue.size() >= counts) {
+					LOG.info("read thread sleep, current line is : {}, current queue size:{}.", index, queue.size());
+					Threads.sleep(sleep);
+				}
+			}
+
+			LOG.info("finish read all lines from file, line counts are : {}", index);
+		} catch (Exception e) {
+			LOG.error("read file contents line by line into BlockingQueue error.", e);
+			throw new Exception("read file contents line by line into BlockingQueue error.", e);
+		} finally {
+			Closeables.close(reader, in);
 		}
 	}
 
@@ -178,44 +205,6 @@ public final class FileUtil {
 		}
 
 		json = null;
-	}
-
-	/**
-	 * 向文件中写入 json 数据及 .ok 文件，并清除元数据
-	 * 
-	 * @param path
-	 * @param json
-	 */
-	public static <T> void writeWithJson(final String dir, int type, final List<T> datas, AtomicInteger counts) {
-		if (datas == null || datas.isEmpty()) {
-			return;
-		}
-
-		String path = dir + "/" + DateUtil.DateToStr(new Date(), "yyyyMMddHHmmss") + random()
-				+ "_124_440200_743218887_0" + type + ".log";
-
-		int len = datas.size();
-		String json = new Gson().toJson(datas);
-		datas.clear();
-
-		BufferedWriter writer = null;
-		FileOutputStream fos = null;
-
-		try {
-			fos = new FileOutputStream(new File(path));
-			writer = new BufferedWriter(new OutputStreamWriter(fos, Charset.forName("UTF-8")));
-			writer.write(json);
-
-			new File(path + ".ok").createNewFile();
-
-			LOG.info("finish write datas with json into file, size is :{}, write all counts are : {}", len,
-					counts.addAndGet(len));
-			json = null;
-		} catch (Exception e) {
-			LOG.error("write datas with json into file and create ok file error.", e);
-		} finally {
-			Closeables.close(writer, fos);
-		}
 	}
 
 	/**

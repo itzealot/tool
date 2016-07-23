@@ -199,6 +199,41 @@ public final class ParseLineUtil {
 		return Pattern.compile("([\u4e00-\u9fa5]+)").matcher(source).matches();
 	}
 
+	/**
+	 * parse line like ,, ==> ,MULL,
+	 * 
+	 * @param line
+	 * @param delim
+	 * @param results
+	 */
+	public static void parseLine(final String line, String delim, List<String> results) {
+		append(new StringTokenizer(replace(line, delim), delim), results);
+	}
+
+	/**
+	 * 将 ,, 变为 ,MULL,
+	 * 
+	 * @param line
+	 * @param delim
+	 * @return
+	 */
+	private static String replace(final String line, String delim) {
+		String oldString = delim + delim;
+		String newString = delim + "MULL";
+
+		StringBuffer buffer = new StringBuffer();
+		int index = 0;
+		String current = line;
+
+		while ((index = current.indexOf(oldString)) != -1) {
+			buffer.append(current.substring(0, index));
+			buffer.append(newString);
+			current = current.substring(index + delim.length());
+		}
+
+		return buffer.append(current).toString();
+	}
+
 	private ParseLineUtil() {
 	}
 }

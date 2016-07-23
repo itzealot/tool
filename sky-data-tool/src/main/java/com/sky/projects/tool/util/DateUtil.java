@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.sky.projects.tool.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -12,35 +9,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-/**
- * <p>
- * Title:
- * </p>
- * <p>
- * Description:
- * </p>
- * <p>
- * Company: 任子行网络技术股份有限公司
- * </p>
- * 
- * @version 1.00
- * @since May 11, 2015
- * @author Zhushengzun
- * 
- *         Modified History:
- * 
- */
 public class DateUtil {
 
 	public static String DateToStr(Date date) {
-
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String str = format.format(date);
 		return str;
 	}
 
 	public static String DateToStr(Date date, String fmt) {
-
 		SimpleDateFormat format = new SimpleDateFormat(fmt);
 		String str = format.format(date);
 		return str;

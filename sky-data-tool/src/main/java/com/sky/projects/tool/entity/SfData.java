@@ -44,6 +44,9 @@ public class SfData implements Serializable {
 	@JsonProperty("LAST_PLACE")
 	private String LAST_PLACE = "";
 
+	@JsonProperty("SUB_TYPE")
+	private String SUB_TYPE;
+
 	public SfData() {
 		super();
 	}
@@ -70,6 +73,15 @@ public class SfData implements Serializable {
 		this(mAC, pHONE, iMSI, iMEI, aUTH_TYPE, aUTH_CODE, cERTIFICATE_TYPE, cERTIFICATE_CODE, iD_TYPE, aCCOUNT,
 				lAST_PLACE);
 		LAST_TIME = lAST_TIME;
+	}
+
+	public SfData(String mAC, String pHONE, String iMSI, String iMEI, String aUTH_TYPE, String aUTH_CODE,
+			String cERTIFICATE_TYPE, String cERTIFICATE_CODE, String iD_TYPE, String aCCOUNT, int lAST_TIME,
+			String lAST_PLACE, String sUB_TYPE) {
+		this(mAC, pHONE, iMSI, iMEI, aUTH_TYPE, aUTH_CODE, cERTIFICATE_TYPE, cERTIFICATE_CODE, iD_TYPE, aCCOUNT,
+				lAST_PLACE);
+		LAST_TIME = lAST_TIME;
+		SUB_TYPE = sUB_TYPE;
 	}
 
 	public String getMAC() {
@@ -166,6 +178,14 @@ public class SfData implements Serializable {
 
 	public void setLAST_PLACE(String lAST_PLACE) {
 		LAST_PLACE = lAST_PLACE;
+	}
+
+	public String getSUB_TYPE() {
+		return SUB_TYPE;
+	}
+
+	public void setSUB_TYPE(String sUB_TYPE) {
+		SUB_TYPE = sUB_TYPE;
 	}
 
 	@Override

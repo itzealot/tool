@@ -8,6 +8,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+/**
+ * Date Util
+ * 
+ * @author zealot
+ */
 public final class Dates {
 
 	public static Date add(Date date, int offset) {
@@ -20,6 +25,10 @@ public final class Dates {
 		calendar.add(Calendar.DATE, offset);
 
 		return calendar.getTime();
+	}
+
+	public static String date2Str(Date date, String format) {
+		return new SimpleDateFormat(format).format(date);
 	}
 
 	public static String str2UnixString(String source) {

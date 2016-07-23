@@ -12,13 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sky.projects.tool.entity.SfData;
-import com.sky.projects.tool.util.Dates;
+import com.sky.projects.tool.util.DateUtil;
 import com.sky.projects.tool.util.FileUtil;
 import com.sky.projects.tool.util.IDCardUtil;
 import com.sky.projects.tool.util.ParseLineUtil;
 
-public class SdPersonDataTransferThread implements Runnable {
-	private static final Logger LOG = LoggerFactory.getLogger(SdPersonDataTransferThread.class);
+public class TianWeiDataTransferThread implements Runnable {
+	private static final Logger LOG = LoggerFactory.getLogger(TianWeiDataTransferThread.class);
 
 	// 目标文件写入目录
 	private String dir;
@@ -46,10 +46,9 @@ public class SdPersonDataTransferThread implements Runnable {
 
 	// 写入 json 文件的数量
 	private AtomicInteger allCounts;
-	int dataType;
 
-	public SdPersonDataTransferThread(BlockingQueue<String> queue, String dir, int size, int sleep, int type,
-			BlockingQueue<String> parseErrorDataQueue, AtomicInteger allCounts, int dataType) {
+	public TianWeiDataTransferThread(BlockingQueue<String> queue, String dir, int size, int sleep, int type,
+			BlockingQueue<String> parseErrorDataQueue, AtomicInteger allCounts) {
 		this.queue = queue;
 		this.dir = dir;
 		this.size = size;
@@ -57,7 +56,6 @@ public class SdPersonDataTransferThread implements Runnable {
 		this.type = type;
 		this.parseErrorDataQueue = parseErrorDataQueue;
 		this.allCounts = allCounts;
-		this.dataType = dataType;
 	}
 
 	@Override
@@ -87,7 +85,7 @@ public class SdPersonDataTransferThread implements Runnable {
 			doParseLine(line);
 		}
 
-		String path = dir + "/" + Dates.date2Str(new Date(), "yyyyMMddHHmmss") + FileUtil.random()
+		String path = dir + "/" + DateUtil.DateToStr(new Date(), "yyyyMMddHHmmss") + FileUtil.random()
 				+ "_133_440300_723005105_0" + type + ".log";
 
 		FileUtil.writeWithJson(path, datas, allCounts);
@@ -96,17 +94,18 @@ public class SdPersonDataTransferThread implements Runnable {
 	private synchronized void writeParseErrorData() {
 		if (!parseErrorDataQueue.isEmpty()) {
 			parseErrorDataQueue.drainTo(errorLines, 10000);
-			FileUtil.write(new File(dir + "/parse-error-" + dataType + ".txt"), errorLines);
+			FileUtil.write(new File(dir + "/parse-error.txt"), errorLines);
 			LOG.info("finish write the error parse data into file, size is : " + errorLines.size());
 			errorLines.clear();
 		}
 	}
 
 	private void doParseLine(String line) {
-		ParseLineUtil.parse(line, "\t", fileds);
+		ParseLineUtil.parseLine(line, ",", fileds);
 
 		String mAC = "";
-		String pHONE = "";
+		String pHONE = ""; // 座机
+		String mobile = ""; // 手机
 		String iMEI = "";
 		String iMSI = "";
 		String aUTH_TYPE = "";
@@ -116,8 +115,9 @@ public class SdPersonDataTransferThread implements Runnable {
 		String iD_TYPE = "";
 		String aCCOUNT = "";
 		String lAST_PLACE = "";
+		String sUB_TYPE = "1";
 
-		if (fileds.isEmpty()) {
+		if (fileds.isEmpty() || fileds.size() >= 10) {
 			try {
 				parseErrorDataQueue.put(line);
 				LOG.error("parse line error, line:{}", line);
@@ -129,26 +129,8 @@ public class SdPersonDataTransferThread implements Runnable {
 
 		int len = fileds.size();
 
-		if (len >= 1) {// certificate code
-			try {
-				cERTIFICATE_CODE = IDCardUtil.transferIDCard(fileds.get(0));
-			} catch (Exception e) {
-				LOG.error("certificate code error, line:{}", line);
-				return;
-			}
-			if (!isBlank(cERTIFICATE_CODE)) {
-				cERTIFICATE_TYPE = "1021111";
-			} else {
-				cERTIFICATE_CODE = "";
-			}
-		}
-
 		if (len >= 2) { // name
 			aUTH_CODE = fileds.get(1);
-
-			if (aUTH_CODE.indexOf("|") != -1) {
-				aUTH_CODE = aUTH_CODE.split("\\|")[1];
-			}
 
 			if (!isBlank(aUTH_CODE)) {
 				aUTH_TYPE = "1021902";
@@ -157,25 +139,58 @@ public class SdPersonDataTransferThread implements Runnable {
 			}
 		}
 
-		if (len >= 3) {
-			pHONE = fileds.get(2);
+		if (len >= 3) {// certificate code
+			cERTIFICATE_CODE = fileds.get(2);
+
+			if (!isBlank(cERTIFICATE_CODE)) {
+				try {
+					cERTIFICATE_CODE = IDCardUtil.transferIDCard(cERTIFICATE_CODE);
+					cERTIFICATE_TYPE = "1021111";
+				} catch (Exception e) {
+				}
+			} else {
+				cERTIFICATE_CODE = "";
+			}
+		}
+
+		if (len >= 4) {// LAST_PLACE
+			lAST_PLACE = fileds.get(3);
+			if (isBlank(lAST_PLACE)) {
+				lAST_PLACE = "";
+			}
+		}
+
+		if (len >= 5) {// pHONE
+			pHONE = fileds.get(4);
 			if (isBlank(pHONE)) {
 				pHONE = "";
 			}
 		}
 
-		if (len >= 4) {
-			aCCOUNT = fileds.get(3);
-			if (!isBlank(aCCOUNT)) {
-				iD_TYPE = "1030001"; // QQ protocol
+		if (len >= 6) {// MOBILE_PHONE
+			mobile = fileds.get(5);
+			if (isBlank(mobile)) {
+				mobile = "";
+			}
+		}
+
+		if (len >= 8) {// MOBILE_PHONE
+			aCCOUNT = fileds.get(7);
+			if (!isBlank(aCCOUNT) && aCCOUNT.length() == 16) {
+				iD_TYPE = "1319999";
 			} else {
 				aCCOUNT = "";
 			}
 		}
 
 		long startTime = new Date().getTime() / 1000;
-		datas.add(new SfData(mAC, pHONE, iMSI, iMEI, aUTH_TYPE, aUTH_CODE, cERTIFICATE_TYPE, cERTIFICATE_CODE, iD_TYPE,
-				aCCOUNT, Integer.valueOf("" + startTime), lAST_PLACE));
+		if (!isBlank(pHONE))
+			datas.add(new SfData(mAC, pHONE, iMSI, iMEI, aUTH_TYPE, aUTH_CODE, cERTIFICATE_TYPE, cERTIFICATE_CODE,
+					iD_TYPE, aCCOUNT, Integer.valueOf("" + startTime), lAST_PLACE, sUB_TYPE));
+
+		if (!isBlank(mobile))
+			datas.add(new SfData(mAC, mobile, iMSI, iMEI, aUTH_TYPE, aUTH_CODE, cERTIFICATE_TYPE, cERTIFICATE_CODE,
+					iD_TYPE, aCCOUNT, Integer.valueOf("" + startTime), lAST_PLACE, sUB_TYPE));
 
 		// 清空字段
 		fileds.clear();

@@ -1,6 +1,11 @@
 package com.sky.projects.tool.util;
 
-public class IDCardUtil {
+/**
+ * IDCard Util
+ * 
+ * @author zealot
+ */
+public final class IDCardUtil {
 
 	/**
 	 *
@@ -91,10 +96,6 @@ public class IDCardUtil {
 		}
 
 		return true;
-	}
-
-	public static void main(String[] args) {
-		System.out.println(from15to18(19, "522634520829128"));
 	}
 
 }
