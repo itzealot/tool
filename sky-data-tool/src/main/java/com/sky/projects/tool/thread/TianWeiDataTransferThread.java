@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sky.projects.tool.entity.SfData;
-import com.sky.projects.tool.util.DateUtil;
+import com.sky.projects.tool.util.Dates;
 import com.sky.projects.tool.util.FileUtil;
 import com.sky.projects.tool.util.IDCardUtil;
 import com.sky.projects.tool.util.ParseLineUtil;
@@ -66,6 +66,7 @@ public class TianWeiDataTransferThread implements Runnable {
 				queue.drainTo(lines, size);
 				doParse();
 				this.lines.clear();
+				writeParseErrorData();
 			} else {
 				Threads.sleep(sleep);
 				writeParseErrorData();
@@ -85,10 +86,11 @@ public class TianWeiDataTransferThread implements Runnable {
 			doParseLine(line);
 		}
 
-		String path = dir + "/" + DateUtil.DateToStr(new Date(), "yyyyMMddHHmmss") + FileUtil.random()
+		String path = dir + "/" + Dates.date2Str(new Date(), "yyyyMMddHHmmss") + FileUtil.random()
 				+ "_133_440300_723005105_0" + type + ".log";
 
 		FileUtil.writeWithJson(path, datas, allCounts);
+		datas.clear();
 	}
 
 	private synchronized void writeParseErrorData() {
@@ -117,17 +119,19 @@ public class TianWeiDataTransferThread implements Runnable {
 		String lAST_PLACE = "";
 		String sUB_TYPE = "1";
 
-		if (fileds.isEmpty() || fileds.size() >= 10) {
+		int len = fileds.size();
+
+		if (fileds.size() != 8) {
 			try {
 				parseErrorDataQueue.put(line);
 				LOG.error("parse line error, line:{}", line);
 			} catch (InterruptedException e) {
 				LOG.error("put line into queue error", e);
 			}
+
+			fileds.clear();
 			return;
 		}
-
-		int len = fileds.size();
 
 		if (len >= 2) { // name
 			aUTH_CODE = fileds.get(1);
@@ -147,6 +151,7 @@ public class TianWeiDataTransferThread implements Runnable {
 					cERTIFICATE_CODE = IDCardUtil.transferIDCard(cERTIFICATE_CODE);
 					cERTIFICATE_TYPE = "1021111";
 				} catch (Exception e) {
+					cERTIFICATE_CODE = "";
 				}
 			} else {
 				cERTIFICATE_CODE = "";
