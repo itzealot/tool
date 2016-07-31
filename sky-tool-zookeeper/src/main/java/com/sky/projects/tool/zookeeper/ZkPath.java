@@ -178,7 +178,7 @@ public interface ZkPath {
 	 *
 	 * @param data
 	 */
-	public void setData(byte[] data);
+	public ZkPath setData(byte[] data);
 
 	/**
 	 * 从 Zookeeper 中加载数据

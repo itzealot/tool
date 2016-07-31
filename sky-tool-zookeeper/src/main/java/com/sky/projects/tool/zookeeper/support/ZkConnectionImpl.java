@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.RetryOneTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +25,14 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 	CuratorFramework client;
 
 	public ZkConnectionImpl(String connectionString) {
-		client = CuratorFrameworkFactory.builder().connectString(connectionString).build();
+		client = CuratorFrameworkFactory.builder().connectString(connectionString).retryPolicy(new RetryOneTime(100))
+				.build();
 		client.start();
 	}
 
 	public ZkConnectionImpl(String connectionString, String namespace) {
-		client = CuratorFrameworkFactory.builder().connectString(connectionString).namespace(namespace).build();
+		client = CuratorFrameworkFactory.builder().connectString(connectionString).namespace(namespace)
+				.retryPolicy(new RetryOneTime(100)).build();
 		client.start();
 	}
 
@@ -45,7 +48,7 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 
 	@Override
 	public ZkRoot createRoot(String path, byte[] data) {
-		return new ZkRootImpl(this, "/", data);
+		return new ZkRootImpl(this, path, data);
 	}
 
 	@Override

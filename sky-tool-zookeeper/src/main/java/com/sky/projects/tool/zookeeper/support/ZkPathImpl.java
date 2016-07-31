@@ -238,8 +238,9 @@ public class ZkPathImpl implements ZkPath {
 	}
 
 	@Override
-	public void setData(byte[] data) {
+	public ZkPath setData(byte[] data) {
 		this.data = data;
+		return this;
 	}
 
 	@Override
