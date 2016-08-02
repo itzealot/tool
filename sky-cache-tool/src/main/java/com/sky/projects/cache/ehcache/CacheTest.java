@@ -1,4 +1,4 @@
-package com.sky.projects.cache;
+package com.sky.projects.cache.ehcache;
 
 import java.io.Serializable;
 
