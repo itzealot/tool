@@ -4,7 +4,7 @@ import com.lmax.disruptor.EventFactory;
 import com.sky.projects.tool.message.LongEvent;
 
 /**
- * 我们同时还声明了一个EventFactory来实例化Event对象
+ * 声明一个 EventFactory 来实例化Event对象
  * 
  * @author zealot
  *

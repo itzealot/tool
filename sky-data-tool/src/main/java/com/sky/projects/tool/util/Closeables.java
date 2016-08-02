@@ -10,13 +10,13 @@ public final class Closeables {
 	public static void close(AutoCloseable... closeables) {
 		if (closeables != null) {
 			for (AutoCloseable closeable : closeables)
-				try {
-					if (closeable != null)
+				if (closeable != null)
+					try {
 						closeable.close();
-				} catch (Exception e) {
-				} finally {
-					closeable = null;
-				}
+					} catch (Exception e) {
+					} finally {
+						closeable = null;
+					}
 		}
 	}
 

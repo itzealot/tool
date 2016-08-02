@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 序列化工具类
  * 
- * @author zt
+ * @author zealot
  */
 public final class Serializables {
 	private static final Logger LOG = LoggerFactory.getLogger(Serializables.class);
@@ -131,16 +131,16 @@ public final class Serializables {
 		return obj;
 	}
 
-	private static void close(Closeable... clos) {
+	public static void close(Closeable... clos) {
 		if (clos != null) {
-			for (int i = 0; i < clos.length; i++) {
-				try {
-					if (clos[i] != null) {
+			for (int i = 0, len = clos.length; i < len; i++) {
+				if (clos[i] != null) {
+					try {
 						clos[i].close();
+					} catch (IOException e) {
+					} finally {
 						clos[i] = null;
 					}
-				} catch (IOException e) {
-					LOG.error("close the connection error, index is: " + i, e);
 				}
 			}
 		}

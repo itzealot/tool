@@ -16,8 +16,9 @@ import com.sky.projects.tool.message.LongEvent;
 public class LongEventProducerWithTranslator {
 	private final RingBuffer<LongEvent> ringBuffer;
 
-	// 一个translator可以看做一个事件初始化器，publicEvent方法会调用它
-	// 填充Event
+	/**
+	 * 一个translator可以看做一个事件初始化器，publicEvent方法会调用它填充Event
+	 */
 	private static final EventTranslatorOneArg<LongEvent, ByteBuffer> TRANSLATOR = new EventTranslatorOneArg<LongEvent, ByteBuffer>() {
 		@Override
 		public void translateTo(LongEvent event, long sequence, ByteBuffer buffer) {
