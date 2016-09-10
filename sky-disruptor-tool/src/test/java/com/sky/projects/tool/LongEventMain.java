@@ -4,8 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import com.lmax.disruptor.BlockingWaitStrategy;
-import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.sky.projects.tool.factory.LongEventFactory;
 import com.sky.projects.tool.handler.LongEventHandler;
@@ -25,6 +23,7 @@ public class LongEventMain {
 		int bufferSize = 1024;
 
 		// Construct the Disruptor
+		@SuppressWarnings("deprecation")
 		Disruptor<LongEvent> disruptor = new Disruptor<LongEvent>(factory, bufferSize, executor);
 
 		// Connect the handler

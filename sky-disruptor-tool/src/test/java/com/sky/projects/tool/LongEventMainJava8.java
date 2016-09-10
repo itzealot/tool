@@ -16,6 +16,7 @@ import com.sky.projects.tool.producer.LongEventProducer;
  *
  */
 public class LongEventMainJava8 {
+	@SuppressWarnings({ "deprecation", "unchecked", "unused" })
 	public static void main(String[] args) throws InterruptedException {
 		// Executor that will be used to construct new threads for consumers
 		Executor executor = Executors.newCachedThreadPool();
