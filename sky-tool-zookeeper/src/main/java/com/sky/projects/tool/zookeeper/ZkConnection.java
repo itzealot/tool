@@ -226,7 +226,7 @@ public interface ZkConnection extends AutoCloseable {
 	 * @param path
 	 * @return 返回加载的数据；加载失败返回 null
 	 */
-	public <T> T loadJson(ZkPath path, Class<?> clazz);
+	public <T> T loadJson(ZkPath path, Class<T> clazz);
 
 	/**
 	 * 根据目录对象从Zookeeper 加载Json数据并返回
@@ -234,7 +234,7 @@ public interface ZkConnection extends AutoCloseable {
 	 * @param path
 	 * @return 返回加载的数据；加载失败返回 null
 	 */
-	public <T> T loadJson(String path, Class<?> clazz);
+	public <T> T loadJson(String path, Class<T> clazz);
 
 	/**
 	 * 根据目录对象从Zookeeper 加载数据保存到到目录对象中，并返回序列化数据

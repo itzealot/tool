@@ -254,8 +254,8 @@ public class ZkPathImpl implements ZkPath {
 	}
 
 	@Override
-	public String loadJson(Class<?> clazz) {
-		return connection.loadJson(this, clazz);
+	public String loadJson() {
+		return connection.loadJson(this, String.class);
 	}
 
 	@Override

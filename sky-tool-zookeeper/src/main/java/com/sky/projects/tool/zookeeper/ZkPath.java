@@ -200,7 +200,7 @@ public interface ZkPath {
 	 * @param clazz
 	 * @return
 	 */
-	public String loadJson(Class<?> clazz);
+	public String loadJson();
 
 	/**
 	 * 持久化当前对象到 Zookeeper

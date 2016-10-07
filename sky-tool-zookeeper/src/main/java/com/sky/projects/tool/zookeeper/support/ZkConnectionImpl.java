@@ -232,7 +232,7 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 	}
 
 	@Override
-	public <T> T loadJson(ZkPath path, Class<?> clazz) {
+	public <T> T loadJson(ZkPath path, Class<T> clazz) {
 		try {
 			byte[] data = client.getData().forPath(path.getPath());
 			path.setData(data);
@@ -245,7 +245,7 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 	}
 
 	@Override
-	public <T> T loadJson(String path, Class<?> clazz) {
+	public <T> T loadJson(String path, Class<T> clazz) {
 		try {
 			return new Gson().fromJson(new String(client.getData().forPath(path)), clazz);
 		} catch (Exception e) {
