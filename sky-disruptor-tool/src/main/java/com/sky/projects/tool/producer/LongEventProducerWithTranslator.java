@@ -14,6 +14,7 @@ import com.sky.projects.tool.message.LongEvent;
  *
  */
 public class LongEventProducerWithTranslator {
+
 	private final RingBuffer<LongEvent> ringBuffer;
 
 	/**

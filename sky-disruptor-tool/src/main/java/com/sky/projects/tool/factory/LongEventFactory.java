@@ -10,8 +10,10 @@ import com.sky.projects.tool.message.LongEvent;
  *
  */
 public class LongEventFactory implements EventFactory<LongEvent> {
+
 	@Override
 	public LongEvent newInstance() {
 		return new LongEvent();
 	}
+
 }

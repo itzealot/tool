@@ -1,5 +1,7 @@
 package com.sky.projects.tool;
 
+import java.io.Serializable;
+
 /**
  * 发布事件接口
  * 
@@ -7,7 +9,7 @@ package com.sky.projects.tool;
  *
  * @param <T>
  */
-public interface Publisher<T> {
+public interface Publisher<T> extends Serializable {
 
 	/**
 	 * 根据数据源发布事件

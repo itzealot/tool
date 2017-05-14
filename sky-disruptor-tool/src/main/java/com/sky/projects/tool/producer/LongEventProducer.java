@@ -13,7 +13,9 @@ import com.sky.projects.tool.message.LongEvent;
  * @author zealot
  *
  */
+@SuppressWarnings("serial")
 public class LongEventProducer implements Publisher<ByteBuffer> {
+
 	private final RingBuffer<LongEvent> ringBuffer;
 
 	public LongEventProducer(RingBuffer<LongEvent> ringBuffer) {
