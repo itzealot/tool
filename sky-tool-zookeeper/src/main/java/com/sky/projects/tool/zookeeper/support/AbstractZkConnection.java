@@ -7,9 +7,9 @@ import com.sky.projects.tool.zookeeper.ZkTransaction;
 
 public abstract class AbstractZkConnection implements ZkConnection, ZkBackground, ZkTransaction {
 	// 是否进行事务
-	private boolean transaction = false;
+	protected boolean transaction = false;
 	// 是否后台运行
-	private boolean background = false;
+	protected boolean background = false;
 	protected ZkRoot root = null;
 
 	AbstractZkConnection() {
@@ -27,12 +27,12 @@ public abstract class AbstractZkConnection implements ZkConnection, ZkBackground
 
 	@Override
 	public void commitTransaction() {
-		transaction = false;
+		this.transaction = false;
 	}
 
 	@Override
 	public void setBackground(boolean backgroundMode) {
-		background = backgroundMode;
+		this.background = backgroundMode;
 	}
 
 	@Override

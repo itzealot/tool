@@ -6,7 +6,7 @@ import com.sky.projects.tool.zookeeper.ZkRoot;
 /**
  * 根节点 ZkRoot
  *
- * @author zt
+ * @author zealot
  *
  */
 public final class ZkRootImpl extends ZkPathImpl implements ZkRoot {

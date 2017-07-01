@@ -7,17 +7,12 @@ import java.nio.channels.FileChannel.MapMode;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * File Util
  * 
  * @author zealot
  */
 public final class Files {
-
-	private static final Logger LOG = LoggerFactory.getLogger(Files.class);
 
 	public static void copy(String src, String dir) {
 		copy(new File(src), new File(dir));
@@ -27,7 +22,6 @@ public final class Files {
 		try {
 			com.google.common.io.Files.copy(from, to);
 		} catch (IOException e) {
-			LOG.error("copy file error, from:{}, to:{}, {}", from.getAbsolutePath(), to.getAbsolutePath(), e);
 		}
 	}
 
@@ -35,7 +29,6 @@ public final class Files {
 		try {
 			com.google.common.io.Files.append(from, to, charset);
 		} catch (IOException e) {
-			LOG.error("append line into file error, to:{}, {}", to.getAbsoluteFile(), e);
 		}
 	}
 
@@ -44,7 +37,6 @@ public final class Files {
 			for (int i = 0, len = froms.size(); i < len; i++)
 				com.google.common.io.Files.append(froms.get(i), to, charset);
 		} catch (IOException e) {
-			LOG.error("append line into file error, to:{}, {}", to.getAbsoluteFile(), e);
 		}
 	}
 
@@ -64,7 +56,6 @@ public final class Files {
 		try {
 			com.google.common.io.Files.createParentDirs(file);
 		} catch (IOException e) {
-			LOG.error("create parent dirs error. path:{}, {}", file.getAbsolutePath(), e);
 		}
 	}
 
@@ -72,7 +63,6 @@ public final class Files {
 		try {
 			com.google.common.io.Files.move(from, to);
 		} catch (IOException e) {
-			LOG.error("move file error. from:{}, to:{}, {}", from.getAbsolutePath(), to.getAbsolutePath(), e);
 		}
 	}
 
@@ -84,7 +74,6 @@ public final class Files {
 		try {
 			return com.google.common.io.Files.map(file);
 		} catch (IOException e) {
-			LOG.error("map file error, path:{}, {}", file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -93,7 +82,6 @@ public final class Files {
 		try {
 			return com.google.common.io.Files.map(file, mode);
 		} catch (IOException e) {
-			LOG.error("map file error, path:{}, mode:{}, {}", file.getAbsolutePath(), mode.toString(), e);
 			return null;
 		}
 	}
@@ -102,7 +90,6 @@ public final class Files {
 		try {
 			return com.google.common.io.Files.map(file, mode, size);
 		} catch (IOException e) {
-			LOG.error("map error, path:{}, mode:{}, size:{}, {}", file.getAbsolutePath(), mode.toString(), size, e);
 			return null;
 		}
 	}

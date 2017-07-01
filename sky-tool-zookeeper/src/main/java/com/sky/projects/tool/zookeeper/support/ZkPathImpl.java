@@ -18,13 +18,13 @@ import com.sky.projects.tool.zookeeper.ZkPath;
 /**
  * 路径节点 ZkPath
  *
- * @author zt
+ * @author zealot
  *
  */
 public class ZkPathImpl implements ZkPath {
 	// 绝对路径
-	protected String path;
-	protected ZkConnectionImpl connection;
+	protected final String path;
+	protected final ZkConnectionImpl connection;
 	private byte[] data;
 
 	ZkPathImpl(ZkConnectionImpl connection, String path, byte[] data) {

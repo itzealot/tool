@@ -8,8 +8,6 @@ import java.util.List;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -20,7 +18,6 @@ import com.sky.projects.tool.zookeeper.ZkRoot;
 
 public final class ZkConnectionImpl extends AbstractZkConnection {
 	private static final byte[] DEFAULT_DATA = new byte[0];
-	private static final Logger LOG = LoggerFactory.getLogger(ZkConnectionImpl.class);
 
 	CuratorFramework client;
 
@@ -116,7 +113,6 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 			client.delete().forPath(path);
 			return true;
 		} catch (Exception e) {
-			LOG.error("delete path error, path is: {}, {}", path, e);
 			return false;
 		}
 	}
@@ -132,7 +128,6 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 			client.delete().deletingChildrenIfNeeded().forPath(path);
 			return true;
 		} catch (Exception e) {
-			LOG.error("delete path recursive error, path is: {}, {}", path.toString(), e);
 			return false;
 		}
 	}
@@ -186,7 +181,6 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 		try {
 			return client.getChildren().forPath(path);
 		} catch (Exception e) {
-			LOG.error("get children for path error, path is: {}, {}", path, e);
 			return Lists.newArrayList();
 		}
 	}
@@ -216,7 +210,6 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 			path.setData(bytes);
 			return bytes;
 		} catch (Exception e) {
-			LOG.error("load bytes data from path error, {}, {}", path, e);
 			return null;
 		}
 	}
@@ -226,7 +219,6 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 		try {
 			return client.getData().forPath(path);
 		} catch (Exception e) {
-			LOG.error("load bytes data from path error, path is: {}, {}", path, e);
 			return null;
 		}
 	}
@@ -239,7 +231,6 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 
 			return new Gson().fromJson(new String(data), clazz);
 		} catch (Exception e) {
-			LOG.error("load json data from path error, {}, {}", path, e);
 			return null;
 		}
 	}
@@ -249,7 +240,6 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 		try {
 			return new Gson().fromJson(new String(client.getData().forPath(path)), clazz);
 		} catch (Exception e) {
-			LOG.error("load json data from path error, path is: {}, {}", path, e);
 			return null;
 		}
 	}
@@ -259,9 +249,8 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 		try {
 			byte[] data = client.getData().forPath(path.getPath());
 			path.setData(data);
-			return Serializables.read(data);
+			return Serializables.readObject(data);
 		} catch (Exception e) {
-			LOG.error("load serialize data from path error, {}, {}", path, e);
 			return null;
 		}
 	}
@@ -269,9 +258,8 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 	@Override
 	public <T extends Serializable> T loadSerializeData(String path) {
 		try {
-			return Serializables.read(client.getData().forPath(path));
+			return Serializables.readObject(client.getData().forPath(path));
 		} catch (Exception e) {
-			LOG.error("load serialize data from path error, path is: {}, {}", path, e);
 			return null;
 		}
 	}
@@ -289,7 +277,6 @@ public final class ZkConnectionImpl extends AbstractZkConnection {
 			mkdirs(path);
 			client.setData().forPath(path, data);
 		} catch (Exception e) {
-			LOG.error("persist data into path error, path is: {}, {}", path, e);
 		}
 	}
 

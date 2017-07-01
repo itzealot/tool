@@ -1,10 +1,9 @@
 package com.sky.projects.tool.zookeeper;
 
 /**
- * Zookeeper 根目录
+ * ZkRoot
  * 
- * @author zt
+ * @author zealot
  */
 public interface ZkRoot extends ZkPath {
-
 }

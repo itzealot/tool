@@ -1,9 +1,16 @@
 package com.sky.projects.tool.zookeeper;
 
+/**
+ * ZkTransaction
+ * 
+ * @author zealot
+ *
+ */
 public interface ZkTransaction {
-	public void beginTransaction();
 
-	public boolean inTransaction();
+	void beginTransaction();
 
-	public void commitTransaction();
+	boolean inTransaction();
+
+	void commitTransaction();
 }
